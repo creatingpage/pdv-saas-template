@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  GARCOM
+  CAIXA
+  ADMIN
+}
+
+enum OrderStatus {
+  DISPONIVEL
+  ABERTA
+  AGUARDANDO_PAGAMENTO
+}
+
+enum PaymentMethod {
+  DINHEIRO
+  PIX
+  CARTAO
+}
+
+model User {
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(GARCOM)
+}
+
+model Product {
+  id         String      @id @default(cuid())
+  name       String
+  price      Float
+  category   String
+  active     Boolean     @default(true)
+  OrderItems OrderItem[]
+}
+
+model Order {
+  number     Int           @id
+  status     OrderStatus   @default(DISPONIVEL)
+  updatedAt  DateTime      @updatedAt
+  OrderItems OrderItem[]
+  Sales      Sale[]
+}
+
+model OrderItem {
+  id          String @id @default(cuid())
+  orderNumber Int
+  productId   String
+  quantity    Int
+  unitPrice   Float
+
+  order   Order   @relation(fields: [orderNumber], references: [number])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Sale {
+  id            String        @id @default(cuid())
+  orderNumber   Int
+  totalAmount   Float
+  paymentMethod PaymentMethod
+  closedAt      DateTime      @default(now())
+  SaleItems     SaleItem[]
+
+  order Order @relation(fields: [orderNumber], references: [number])
+}
+
+model SaleItem {
+  id          String @id @default(cuid())
+  saleId      String
+  productName String
+  quantity    Int
+  unitPrice   Float
+
+  sale Sale @relation(fields: [saleId], references: [id])
+}

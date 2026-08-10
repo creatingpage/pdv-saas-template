@@ -1,0 +1,34 @@
+# Dependências
+node_modules/
+**/node_modules/
+
+# Builds e artefatos de produção
+dist/
+**/dist/
+build/
+**/build/
+.vite/
+**/.vite/
+
+# Variáveis de ambiente e segredos (NUNCA commitar)
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+**/.env.*.local
+!.env.example
+!**/.env.example
+!**/.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Prisma / banco local
+*.db
+*.sqlite
+prisma/*.db

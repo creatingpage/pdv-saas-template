@@ -1,0 +1,21 @@
+{
+  "name": "pdv-matriz-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PDV de Bar - frontend React (Vite) + backend Node/Express. Iniciacao unificada e deploy autonomo.",
+  "scripts": {
+    "start": "node scripts/start.mjs",
+    "start:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm run dev",
+    "dev": "concurrently -k -n FRONTEND,BACKEND -c cyan,green \"npm run start:frontend\" \"npm run start:backend\"",
+    "build": "cd frontend && npm run build",
+    "preview": "cd frontend && npm run preview",
+    "install:all": "npm --prefix frontend install && npm --prefix backend install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
