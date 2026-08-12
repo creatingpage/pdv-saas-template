@@ -158,12 +158,12 @@ export default function Caixa() {
     <div className="h-full flex flex-col">
       <div className="shrink-0 flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">
+          <h2 className="text-2xl font-extrabold text-slate-900">
             Comanda #{comandaDetalhada.number}
           </h2>
           {temItens && (
             <span className={`
-              inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider
+              inline-block mt-2 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider
               ${comandaDetalhada.status === 'AGUARDANDO_PAGAMENTO' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}
             `}>
               {comandaDetalhada.status === 'AGUARDANDO_PAGAMENTO' ? 'Em Caixa' : 'Aberta'}
@@ -172,7 +172,8 @@ export default function Caixa() {
         </div>
         <button
           onClick={fecharDetalhe}
-          className="lg:hidden w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 select-none"
+          className="lg:hidden w-12 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 text-2xl select-none"
+          aria-label="Fechar"
         >
           &times;
         </button>
@@ -188,15 +189,15 @@ export default function Caixa() {
               {comandaDetalhada.OrderItems.map((item, idx) => (
                 <div
                   key={item.id || idx}
-                  className="flex items-center justify-between py-2 px-3 bg-slate-50 rounded-lg text-sm"
+                  className="py-2.5 px-3 bg-slate-50 rounded-lg"
                 >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-medium text-slate-400 tabular-nums shrink-0">{item.quantity}x</span>
-                    <span className="truncate text-slate-700">{item.product?.name || 'Produto'}</span>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-slate-700 leading-snug min-w-0">{item.product?.name || 'Produto'}</p>
+                    <span className="font-bold text-slate-800 tabular-nums shrink-0">
+                      R$ {(item.quantity * item.unitPrice).toFixed(2)}
+                    </span>
                   </div>
-                  <span className="font-semibold text-slate-800 tabular-nums shrink-0 ml-3">
-                    R$ {(item.quantity * item.unitPrice).toFixed(2)}
-                  </span>
+                  <span className="mt-0.5 inline-block text-[11px] font-medium text-slate-400 tabular-nums">{item.quantity}x</span>
                 </div>
               ))}
             </div>

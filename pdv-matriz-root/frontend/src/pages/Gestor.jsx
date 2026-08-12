@@ -63,6 +63,7 @@ export default function Gestor() {
 
   const [alertMsg, setAlertMsg] = useState(null);
   const [vendaSelecionada, setVendaSelecionada] = useState(null);
+  const [showAlertaEstoque, setShowAlertaEstoque] = useState(false);
 
   useEffect(() => {
     setEditProduto(null);
@@ -77,10 +78,10 @@ export default function Gestor() {
   }, [aba]);
 
   useEffect(() => {
-    const aberto = showFormProduto || showFormFunc || editFunc || deleteFunc || showAbastecer || vendaSelecionada;
+    const aberto = showFormProduto || showFormFunc || editFunc || deleteFunc || showAbastecer || vendaSelecionada || showAlertaEstoque;
     document.body.classList.toggle('modal-open', !!aberto);
     return () => document.body.classList.remove('modal-open');
-  }, [showFormProduto, showFormFunc, editFunc, deleteFunc, showAbastecer, vendaSelecionada]);
+  }, [showFormProduto, showFormFunc, editFunc, deleteFunc, showAbastecer, vendaSelecionada, showAlertaEstoque]);
 
   function alerta(msg) {
     setAlertMsg(msg);
@@ -404,7 +405,15 @@ export default function Gestor() {
                   {metricas.margemLucro.toFixed(1)}%
                 </p>
               </div>
-              <div className={`rounded-xl shadow-sm border p-5 ${estoqueCritico.contagem > 0 ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'}`}>
+              <button
+                type="button"
+                onClick={() => setShowAlertaEstoque(true)}
+                className={`text-left w-full rounded-xl shadow-sm border p-5 transition-all duration-200 cursor-pointer select-none active:scale-[0.98] ${
+                  estoqueCritico.contagem > 0
+                    ? 'bg-red-50 border-red-200 hover:bg-red-100 hover:shadow-md'
+                    : 'bg-white border-slate-200 hover:bg-slate-50 hover:shadow-md'
+                }`}
+              >
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Alerta de Estoque</p>
                   {estoqueCritico.contagem > 0 && (
@@ -419,7 +428,7 @@ export default function Gestor() {
                     ? `produto(s) com estoque ≤ ${ESTOQUE_CRITICO_LIMITE}`
                     : 'estoque saudável'}
                 </p>
-              </div>
+              </button>
             </div>
 
             {/* Grid 2 colunas: Top Produtos + Últimas Vendas */}
@@ -440,37 +449,6 @@ export default function Gestor() {
                     </div>
                   ))}
                 </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-                <h3 className="text-sm font-semibold text-slate-700 mb-3">Alertas de Estoque Baixo</h3>
-                {estoqueCritico.lista.length === 0 ? (
-                  <div className="flex items-center gap-3 text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-4">
-                    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p className="text-sm font-medium">Estoque sob controle! Nenhum produto em nível crítico.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {estoqueCritico.lista.map(p => {
-                      const estoque = p.estoque ?? 0;
-                      return (
-                        <div key={p.id} className="flex items-center gap-3">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-slate-800 truncate">{p.name}</p>
-                            <p className="text-[11px] text-slate-400">{p.category}</p>
-                          </div>
-                          <span className={`shrink-0 text-xs font-semibold tabular-nums ${
-                            estoque === 0 ? 'text-red-600' : 'text-red-500'
-                          }`}>
-                            {estoque === 0 ? 'Esgotado' : `Apenas ${estoque} un`}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
               </div>
 
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
@@ -1101,6 +1079,66 @@ export default function Gestor() {
                   variant="secondary"
                   onClick={() => setVendaSelecionada(null)}
                   className="w-full sm:flex-1"
+                >
+                  Fechar
+                </Botao>
+              </div>
+            </div>
+          </div>
+        )}
+      {showAlertaEstoque && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowAlertaEstoque(false)} />
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-6">
+              <div className="flex items-start justify-between mb-1">
+                <h3 className="text-lg font-bold text-slate-800">Itens com Estoque Baixo</h3>
+                <button
+                  type="button"
+                  onClick={() => setShowAlertaEstoque(false)}
+                  className="shrink-0 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors select-none"
+                  title="Fechar"
+                  aria-label="Fechar"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {estoqueCritico.lista.length === 0 ? (
+                <div className="mt-4 flex items-center gap-3 text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-4">
+                  <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-sm font-medium">Estoque sob controle! Nenhum produto em nível crítico.</p>
+                </div>
+              ) : (
+                <div className="mt-4 space-y-2">
+                  {estoqueCritico.lista.map(p => {
+                    const estoque = p.estoque ?? 0;
+                    return (
+                      <div key={p.id} className="flex items-center gap-3 rounded-lg border border-slate-100 px-3 py-2.5">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-800 truncate">{p.name}</p>
+                          <p className="text-[11px] text-slate-400">{p.category}</p>
+                        </div>
+                        <span className={`shrink-0 text-xs font-semibold tabular-nums ${
+                          estoque === 0 ? 'text-red-600' : 'text-red-500'
+                        }`}>
+                          {estoque === 0 ? 'Esgotado' : `Apenas ${estoque} un`}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="flex pt-4">
+                <Botao
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setShowAlertaEstoque(false)}
+                  className="w-full"
                 >
                   Fechar
                 </Botao>

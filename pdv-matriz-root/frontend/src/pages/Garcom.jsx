@@ -357,9 +357,9 @@ export default function Garcom() {
 
             <div className="shrink-0 bg-slate-900 text-white px-5 py-4 flex items-center justify-between rounded-t-2xl">
               <div>
-                <h2 className="text-lg font-bold">Comanda #{comandaAtual.number}</h2>
+                <h2 className="text-2xl font-extrabold leading-tight">Comanda #{comandaAtual.number}</h2>
                 <span className={`
-                  inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider
+                  inline-block mt-2 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider
                   ${comandaAtual.status === 'ABERTA' ? 'bg-blue-500 text-white' :
                     comandaAtual.status === 'AGUARDANDO_PAGAMENTO' ? 'bg-amber-500 text-white' :
                     'bg-emerald-500 text-white'}
@@ -370,7 +370,8 @@ export default function Garcom() {
               </div>
               <button
                 onClick={() => setComandaSelecionadaNumero(null)}
-                className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 text-lg shrink-0 select-none"
+                className="w-12 h-12 rounded-xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 text-2xl shrink-0 select-none"
+                aria-label="Fechar"
               >
                 &times;
               </button>
@@ -383,41 +384,51 @@ export default function Garcom() {
                   <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
                     Itens consumidos
                   </h3>
-                  <div className="space-y-1">
+                  <div className="space-y-3">
                     {(comandaAtual.OrderItems || []).map((item, idx) => (
                       <div
                         key={item.id || idx}
-                        className="flex items-center gap-1.5 py-1.5 px-2 bg-slate-50 rounded-lg text-sm"
+                        className="py-3 px-3 bg-slate-50 rounded-lg"
                       >
-                        <div className="flex-1 min-w-0 flex items-center gap-1.5">
-                          <span className="font-medium text-slate-400 tabular-nums shrink-0">{qtd(item)}x</span>
-                          <span className="truncate text-slate-700">{nome(item)}</span>
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-slate-700 leading-snug">{nome(item)}</p>
+                            <span className="mt-0.5 inline-block text-[11px] font-medium text-slate-400 tabular-nums">{qtd(item)}x</span>
+                          </div>
+                          <span className="font-bold text-slate-800 tabular-nums shrink-0 text-base">
+                            R$ {(qtd(item) * preco(item)).toFixed(2)}
+                          </span>
                         </div>
 
-                        <div className="flex items-center gap-0.5 shrink-0">
-                          <button
-                            onClick={() => editarItem(item.id, 'decrease')}
-                            disabled={loading}
-                            className="w-6 h-6 rounded bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs font-bold transition-colors disabled:opacity-40 select-none"
-                          >-</button>
-                          <button
-                            onClick={() => editarItem(item.id, 'increase')}
-                            disabled={loading}
-                            className="w-6 h-6 rounded bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 text-xs font-bold transition-colors disabled:opacity-40 select-none"
-                          >+</button>
+                        <div className="mt-3 flex items-center gap-2">
+                          <div className="flex items-center rounded-xl bg-slate-200/70 p-1">
+                            <button
+                              onClick={() => editarItem(item.id, 'decrease')}
+                              disabled={loading}
+                              className="w-11 h-11 rounded-lg bg-slate-100 text-slate-700 hover:bg-white text-xl font-bold transition-colors disabled:opacity-40 select-none"
+                              aria-label="Diminuir quantidade"
+                            >-</button>
+                            <span className="w-12 text-center text-lg font-bold tabular-nums text-slate-800 select-none">
+                              {qtd(item)}
+                            </span>
+                            <button
+                              onClick={() => editarItem(item.id, 'increase')}
+                              disabled={loading}
+                              className="w-11 h-11 rounded-lg bg-slate-100 text-slate-700 hover:bg-white text-xl font-bold transition-colors disabled:opacity-40 select-none"
+                              aria-label="Aumentar quantidade"
+                            >+</button>
+                          </div>
                           <button
                             onClick={() => editarItem(item.id, 'remove')}
                             disabled={loading}
-                            className="w-6 h-6 rounded bg-red-50 border border-red-200 text-red-500 hover:bg-red-100 text-xs font-bold transition-colors disabled:opacity-40 flex items-center justify-center select-none"
+                            className="w-11 h-11 rounded-xl bg-red-50 border border-red-200 text-red-500 hover:bg-red-100 transition-colors disabled:opacity-40 flex items-center justify-center select-none shrink-0"
                             title="Remover item"
+                            aria-label="Remover item"
                           >
-                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                           </button>
-                          <span className="font-semibold text-slate-800 tabular-nums ml-1 w-14 text-right text-[13px]">
-                            R$ {(qtd(item) * preco(item)).toFixed(2)}
-                          </span>
                         </div>
                       </div>
                     ))}
@@ -459,27 +470,27 @@ export default function Garcom() {
               ) : (
                 <>
                   <section>
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-xl font-bold text-slate-800">
                         Cardápio
                       </h3>
-                      <div className="flex gap-1 overflow-x-auto pb-0.5">
-                        {CATEGORIAS.map(cat => (
-                          <button
-                            key={cat}
-                            onClick={() => setFiltroCategoria(cat)}
-                            className={`px-2 py-0.5 rounded text-[10px] font-medium transition-colors shrink-0 select-none ${
-                              filtroCategoria === cat
-                                ? 'bg-slate-900 text-white'
-                                : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                            }`}
-                          >
-                            {cat}
-                          </button>
-                        ))}
-                      </div>
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="flex gap-4 overflow-x-auto pb-2 mb-4">
+                      {CATEGORIAS.map(cat => (
+                        <button
+                          key={cat}
+                          onClick={() => setFiltroCategoria(cat)}
+                          className={`px-5 py-2 rounded-lg text-sm font-semibold transition-colors shrink-0 select-none ${
+                            filtroCategoria === cat
+                              ? 'bg-slate-900 text-white'
+                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="space-y-3">
                       {produtosFiltrados.map(p => {
                         const estoque = p.estoque ?? 0;
                         const esgotado = estoque <= 0;
@@ -488,50 +499,56 @@ export default function Garcom() {
                         return (
                           <div
                             key={p.id}
-                            className={`flex items-center gap-2 py-2 px-3 bg-white border rounded-lg transition-colors ${esgotado ? 'border-red-200 opacity-70' : 'border-slate-100 hover:border-slate-200'}`}
+                            className={`py-3 px-4 bg-white border rounded-xl ${esgotado ? 'border-red-200 opacity-70' : 'border-slate-100'}`}
                           >
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <p className="text-sm font-medium text-slate-800 truncate">{p.name}</p>
-                                {esgotado ? (
-                                  <span className="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide bg-red-100 text-red-600">Esgotado</span>
-                                ) : baixo ? (
-                                  <span className="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide bg-amber-100 text-amber-700">Estoque {estoque}</span>
-                                ) : (
-                                  <span className="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide bg-emerald-100 text-emerald-700">Estoque {estoque}</span>
-                                )}
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-base font-medium text-slate-800 leading-snug">{p.name}</p>
+                                <p className="text-sm text-slate-400 mt-0.5">{p.category}</p>
                               </div>
-                              <p className="text-[11px] text-slate-400">{p.category}</p>
-                              <p className="text-sm font-bold text-emerald-700">
+                              {esgotado ? (
+                                <span className="shrink-0 px-2 py-1 rounded text-[11px] font-bold uppercase tracking-wide bg-red-100 text-red-600">Esgotado</span>
+                              ) : baixo ? (
+                                <span className="shrink-0 px-2 py-1 rounded text-[11px] font-bold uppercase tracking-wide bg-amber-100 text-amber-700">Estoque {estoque}</span>
+                              ) : (
+                                <span className="shrink-0 px-2 py-1 rounded text-[11px] font-bold uppercase tracking-wide bg-emerald-100 text-emerald-700">Estoque {estoque}</span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
+                              <p className="text-lg font-bold text-emerald-700 tabular-nums">
                                 R$ {Number(precoProduto(p)).toFixed(2)}
                               </p>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  onClick={() => setQuantidades(prev => ({
+                                    ...prev, [p.id]: Math.max(1, (prev[p.id] || 1) - 1)
+                                  }))}
+                                  disabled={esgotado}
+                                  className="w-11 h-11 rounded-lg bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition-colors text-xl disabled:opacity-40 disabled:cursor-not-allowed select-none"
+                                  aria-label="Diminuir"
+                                >-</button>
+                                <span className="w-8 text-center text-lg font-bold tabular-nums text-slate-800 select-none">
+                                  {qtdSel}
+                                </span>
+                                <button
+                                  onClick={() => setQuantidades(prev => ({
+                                    ...prev, [p.id]: Math.min((prev[p.id] || 1) + 1, estoque)
+                                  }))}
+                                  disabled={esgotado || qtdSel >= estoque}
+                                  className="w-11 h-11 rounded-lg bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition-colors text-xl disabled:opacity-40 disabled:cursor-not-allowed select-none"
+                                  aria-label="Aumentar"
+                                >+</button>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-1 shrink-0">
-                              <button
-                                onClick={() => setQuantidades(prev => ({
-                                  ...prev, [p.id]: Math.max(1, (prev[p.id] || 1) - 1)
-                                }))}
-                                disabled={esgotado}
-                                className="w-7 h-7 rounded-md bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-colors text-sm disabled:opacity-40 disabled:cursor-not-allowed select-none"
-                              >-</button>
-                              <span className="w-6 text-center text-sm font-bold tabular-nums text-slate-800 select-none">
-                                {qtdSel}
-                              </span>
-                              <button
-                                onClick={() => setQuantidades(prev => ({
-                                  ...prev, [p.id]: Math.min((prev[p.id] || 1) + 1, estoque)
-                                }))}
-                                disabled={esgotado || qtdSel >= estoque}
-                                className="w-7 h-7 rounded-md bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-colors text-sm disabled:opacity-40 disabled:cursor-not-allowed select-none"
-                              >+</button>
-                              <button
-                                onClick={() => adicionarItem(p)}
-                                disabled={loading || esgotado}
-                                className="ml-1 bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0 select-none"
-                              >
-                                {loading ? '...' : esgotado ? 'Esgotado' : 'Add'}
-                              </button>
-                            </div>
+
+                            <button
+                              onClick={() => adicionarItem(p)}
+                              disabled={loading || esgotado}
+                              className="mt-3 w-full bg-blue-600 text-white py-3.5 rounded-xl text-lg font-bold hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed select-none"
+                            >
+                              {loading ? '...' : esgotado ? 'Esgotado' : 'Add'}
+                            </button>
                           </div>
                         );
                       })}
